@@ -19,7 +19,7 @@ interface MemberWithScore extends Member {
 export default function MemberMergeView() {
   const [opened, setOpened] = useState(false);
   const [currentSelected, setCurrentSelected] = useState<DuplicateMember>({});
-  const [members, setMembers] = useState<DuplicateMember[]>([]);
+  const [members, setMembers] = useState<(DuplicateMember | undefined)[]>([]);
   const [compareConfig, setCompareConfig] = useState<string[]>([
     "email",
     "firstName",
@@ -39,9 +39,9 @@ export default function MemberMergeView() {
   }, [compareConfig]);
 
   const selectAndOpen = function (selected: DuplicateMember) {
-    selected.duplicates?.forEach((member: Member) => {
+    selected.duplicates?.forEach((member: (Member|undefined)) => {
       const memberWithScore = member as MemberWithScore;
-      const data = JSON.parse(member.properties);
+      const data = JSON.parse(memberWithScore.properties ?? "{}");
       let score = Math.floor(
         (Date.parse(data.Eintrittsdatum) - 1262296800) / 2628000
       );
